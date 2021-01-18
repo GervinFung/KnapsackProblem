@@ -67,15 +67,27 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 		if (isSelected) {
 			final float cumulativeWeight = current.getCumulativeWeight() + this.copyOfItems.get(current.getNodeLevel()).getWeight();
 			final float cumulativeValue = current.getCumulativeValue() - this.copyOfItems.get(current.getNodeLevel()).getValue();
-			return new Node(computeBound(current, isSelected, true), computeBound(current, isSelected, false), cumulativeValue, cumulativeWeight, current.getNodeLevel() + 1, isSelected);
+			return new Node.NodeBuilder().setUpperBound(computeBound(current, isSelected, true))
+										.setLowerBound(computeBound(current, isSelected, false))
+										.setCumulativeValue(cumulativeValue)
+										.setCumulativeWeight(cumulativeWeight)
+										.setLevel(current.getNodeLevel() + 1)
+										.setIsSelected(isSelected)
+										.build();
 		}
-		return new Node(computeBound(current, isSelected, true), computeBound(current, isSelected, false), current.getCumulativeValue(), current.getCumulativeWeight(), current.getNodeLevel() + 1, isSelected);
+		return new Node.NodeBuilder().setUpperBound(computeBound(current, isSelected, true))
+									.setLowerBound(computeBound(current, isSelected, false))
+									.setCumulativeValue(current.getCumulativeValue())
+									.setCumulativeWeight(current.getCumulativeWeight())
+									.setLevel(current.getNodeLevel() + 1)
+									.setIsSelected(isSelected)
+									.build();
 	}
 
 	@Override
 	protected int computeMaxValue() {
 
-        Node takeItemNode = new Node(), noTakeItemNode = new Node();
+        Node takeItemNode = new Node.NodeBuilder().build(), noTakeItemNode = new Node.NodeBuilder().build();
 		float minLowerBound = 0, finalLowerBound = Integer.MAX_VALUE;
 
 		//boolean array to store at every index if the element is included or not 
@@ -90,7 +102,7 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 		});
 	
 		// Insert a dummy Node 
-		nodesPriorityQueue.add(new Node());
+		nodesPriorityQueue.add(new Node.NodeBuilder().build());
 	
 		while (!nodesPriorityQueue.isEmpty()) {
 			//Extract the peek element from the priority queue and assign it to the current node
@@ -124,17 +136,17 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 
 			else {
 				// Stop the takeItemNode from getting added to the priority queue
-				takeItemNode = new Node(takeItemNode, 1);
+				takeItemNode = new Node.NodeBuilder(takeItemNode).setUpperBound(1).setLowerBound(1).build();
 			}
 			// Update minLowerBound
 			minLowerBound = Math.min(minLowerBound, takeItemNode.getLowerBound());
 			minLowerBound = Math.min(minLowerBound, noTakeItemNode.getLowerBound());
 	
 			if (minLowerBound >= takeItemNode.getUpperBound()) {
-                nodesPriorityQueue.add(new Node(takeItemNode));
+                nodesPriorityQueue.add(new Node.NodeBuilder(takeItemNode).build());
             }
 			if (minLowerBound >= noTakeItemNode.getUpperBound()) {
-                nodesPriorityQueue.add(new Node(noTakeItemNode));
+                nodesPriorityQueue.add(new Node.NodeBuilder(noTakeItemNode).build());
             }
 		}
 		return (int)-finalLowerBound;

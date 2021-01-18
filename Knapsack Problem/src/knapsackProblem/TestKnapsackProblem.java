@@ -148,7 +148,7 @@ public final class TestKnapsackProblem {
 	// return true if file is read properly, return false if file is not found or content is
 	// not valid
 	public static boolean readFile(final ArrayList<Item> itemList) {
-		final String absoluteFilePath = new File("./items.txt").getAbsolutePath();
+		final String absoluteFilePath = new File("items.txt").getAbsolutePath();
 		final String excMessage = "content in \"items.txt\" should be in the following format:\nName of item/Weight/Value/Quantity\n\n";
 		try {
 			final Scanner scanFile = new Scanner(new File(absoluteFilePath));	
@@ -170,7 +170,7 @@ public final class TestKnapsackProblem {
 			}
 			scanFile.close();
 		} catch (final FileNotFoundException exc) {
-			System.out.println("File named \"items.txt\" not found");
+			System.out.println("File named "+ absoluteFilePath + " not found");
 			return false;
 		} catch (final NumberFormatException | ArrayIndexOutOfBoundsException exc) {
 			System.out.println(exc.getMessage());
