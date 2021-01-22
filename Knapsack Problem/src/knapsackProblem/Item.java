@@ -13,8 +13,6 @@ public final class Item implements Comparable<Item> {
 		this.quantity = quantity;
 	}
 
-	public String getName() { return this.name;}
-
 	public int getWeight() { return this.weight;}
 
 	public int getValue() { return this.value;}
@@ -34,9 +32,7 @@ public final class Item implements Comparable<Item> {
 		else if (this.getDensity() == AnotherItem.getDensity()) {
 			return Integer.compare(this.getValue(), AnotherItem.getValue());
 		}
-		else {
-			return 1;
-		}
+		return 1;
 	}
 
 	public String showProperties() {return String.format("%-20s%-8s%-8s%s", name, weight, value, quantity);}

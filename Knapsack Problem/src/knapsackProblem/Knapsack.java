@@ -40,7 +40,7 @@ public final class Knapsack {
 
 	public void showItems() {
 		System.out.println("-------------Item(s) added into knapsack-------------");
-		System.out.println(String.format("%-20s%-8s%-8s%s", "Name", "Weight", "Value", "Taken Quantity"));
+		System.out.printf("%-20s%-8s%-8s%s%n", "Name", "Weight", "Value", "Taken Quantity");
 		System.out.println("--------------------------------------------------");
 		for (final Item item : this.getTakenItems().keySet()) {
 			System.out.println(item.toString() + this.getTakenItems().get(item));

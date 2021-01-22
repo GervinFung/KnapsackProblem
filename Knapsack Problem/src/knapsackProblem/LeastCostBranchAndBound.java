@@ -2,14 +2,15 @@ package knapsackProblem;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import knapsackProblem.Node.NodeBuilder;
+
 public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 
-	//boolean array to store at every index if the element is included or not 
-	private final boolean finalPathOfItemsTaken[];
+	//boolean array to store at every index if the element is included or not
+	private final boolean[] finalPathOfItemsTaken;
 	private final List<Item> copyOfItems;
 
 	public LeastCostBranchAndBound(final Knapsack knapsack) {
@@ -20,18 +21,15 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 		//need to override sort due to arrangement of items with same density
 		//which has differences on the way algorithms work, as Branch and Bound sort according to density of items, if item has same density
 		//item with higher value must be at the top, this sorting does that
-		Collections.sort(this.copyOfItems, new Comparator<Item>(){
-			@Override
-			public int compare(final Item item1, final Item item2) {
-				if (item1.getDensity() > item2.getDensity()) {
-					return -1;
-				}
-				else if (item1.getDensity() == item2.getDensity()) {
-					return -Integer.compare(item1.getValue(), item2.getValue());
-				}
-				else {
-					return 1;
-				}
+		this.copyOfItems.sort((item1, item2) -> {
+			if (item1.getDensity() > item2.getDensity()) {
+				return -1;
+			}
+			else if (item1.getDensity() == item2.getDensity()) {
+				return -Integer.compare(item1.getValue(), item2.getValue());
+			}
+			else {
+				return 1;
 			}
 		});
 	}
@@ -55,7 +53,7 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 			}
 			else {
 				if (isUpperBound) {
-					value -= (float)(this.knapsack.getMaxCapacity() - weight) / item.getWeight() * item.getValue();
+					value -= (this.knapsack.getMaxCapacity() - weight) / item.getWeight() * item.getValue();
 				}
 				break;
 			}
@@ -64,46 +62,45 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 	}
 
 	private Node updateNode(final Node current, final boolean isSelected) {
+		final NodeBuilder nodeBuilder = new NodeBuilder().setUpperBound(computeBound(current, isSelected, true))
+															.setLowerBound(computeBound(current, isSelected, false))
+															.setLevel(current.getNodeLevel() + 1)
+															.setIsSelected(isSelected);
 		if (isSelected) {
 			final float cumulativeWeight = current.getCumulativeWeight() + this.copyOfItems.get(current.getNodeLevel()).getWeight();
 			final float cumulativeValue = current.getCumulativeValue() - this.copyOfItems.get(current.getNodeLevel()).getValue();
-			return new Node.NodeBuilder().setUpperBound(computeBound(current, isSelected, true))
-										.setLowerBound(computeBound(current, isSelected, false))
-										.setCumulativeValue(cumulativeValue)
-										.setCumulativeWeight(cumulativeWeight)
-										.setLevel(current.getNodeLevel() + 1)
-										.setIsSelected(isSelected)
-										.build();
+			return nodeBuilder.setCumulativeValue(cumulativeValue)
+					.setCumulativeWeight(cumulativeWeight)
+					.build();
 		}
-		return new Node.NodeBuilder().setUpperBound(computeBound(current, isSelected, true))
-									.setLowerBound(computeBound(current, isSelected, false))
-									.setCumulativeValue(current.getCumulativeValue())
-									.setCumulativeWeight(current.getCumulativeWeight())
-									.setLevel(current.getNodeLevel() + 1)
-									.setIsSelected(isSelected)
-									.build();
+		return nodeBuilder.setCumulativeValue(current.getCumulativeValue())
+				.setCumulativeWeight(current.getCumulativeWeight())
+				.build();
 	}
 
 	@Override
 	protected int computeMaxValue() {
 
-        Node takeItemNode = new Node.NodeBuilder().build(), noTakeItemNode = new Node.NodeBuilder().build();
+		Node takeItemNode = new Node.NodeBuilder().build(), noTakeItemNode;
 		float minLowerBound = 0, finalLowerBound = Integer.MAX_VALUE;
 
-		//boolean array to store at every index if the element is included or not 
-        final boolean pathOfItemTaken[] = new boolean[this.copyOfItems.size()];
-		
-		//Priority queue to store elements based on lower bounds 
-        final PriorityQueue<Node> nodesPriorityQueue = new PriorityQueue<Node>(new Comparator<Node>() {
-			@Override
-			public int compare(final Node nodeA, final Node nodeB) {
-				return nodeA.getLowerBound() > nodeB.getLowerBound() ? 1 : -1;
+		//boolean array to store at every index if the element is included or not
+		final boolean[] pathOfItemTaken = new boolean[this.copyOfItems.size()];
+
+		//Priority queue to store elements based on lower bounds
+		final PriorityQueue<Node> nodesPriorityQueue = new PriorityQueue<>((nodeA, nodeB) -> {
+			if (nodeA.getLowerBound() > nodeB.getLowerBound()) {
+				return 1;
 			}
+			else if (nodeA.getLowerBound() < nodeB.getLowerBound()) {
+				return -1;
+			}
+			return 0;
 		});
-	
-		// Insert a dummy Node 
+
+		// Insert a dummy Node
 		nodesPriorityQueue.add(new Node.NodeBuilder().build());
-	
+
 		while (!nodesPriorityQueue.isEmpty()) {
 			//Extract the peek element from the priority queue and assign it to the current node
 			final Node current = nodesPriorityQueue.poll();
@@ -118,15 +115,13 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 
 			if (current.getNodeLevel() == this.copyOfItems.size()) {
 				if (current.getLowerBound() < finalLowerBound) {
-					// Reached last level 
-					for (int i = 0; i < this.copyOfItems.size(); i++) {
-						this.finalPathOfItemsTaken[i] = pathOfItemTaken[i];
-					}
+					// Reached last level
+					System.arraycopy(pathOfItemTaken, 0, this.finalPathOfItemsTaken, 0, this.copyOfItems.size());
 					finalLowerBound = current.getLowerBound();
 				}
 				continue;
 			}
-			// noTakeItemNode -> Exludes current item 
+			// noTakeItemNode -> Exludes current item
 			noTakeItemNode = updateNode(current, false);
 
 			if (current.getCumulativeWeight() + this.copyOfItems.get(current.getNodeLevel()).getWeight() <= this.knapsack.getMaxCapacity()) {
@@ -141,21 +136,21 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 			// Update minLowerBound
 			minLowerBound = Math.min(minLowerBound, takeItemNode.getLowerBound());
 			minLowerBound = Math.min(minLowerBound, noTakeItemNode.getLowerBound());
-	
+
 			if (minLowerBound >= takeItemNode.getUpperBound()) {
-                nodesPriorityQueue.add(new Node.NodeBuilder(takeItemNode).build());
-            }
+				nodesPriorityQueue.add(new Node.NodeBuilder(takeItemNode).build());
+			}
 			if (minLowerBound >= noTakeItemNode.getUpperBound()) {
-                nodesPriorityQueue.add(new Node.NodeBuilder(noTakeItemNode).build());
-            }
+				nodesPriorityQueue.add(new Node.NodeBuilder(noTakeItemNode).build());
+			}
 		}
 		return (int)-finalLowerBound;
 	}
 
 	@Override
 	protected List<Item> takeItems(final int maxValue) {
-        final List<Item> itemsTaken = new ArrayList<>();
-        for (int i = 0; i < this.finalPathOfItemsTaken.length; i++) {
+		final List<Item> itemsTaken = new ArrayList<>();
+		for (int i = 0; i < this.finalPathOfItemsTaken.length; i++) {
 			//if the boolean at position i is true, the item that has the same index number with the
 			//boolean value is taken into the knapsack, add the item into the takenItem list
 			if (this.finalPathOfItemsTaken[i]) {

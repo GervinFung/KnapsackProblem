@@ -1,6 +1,6 @@
 package knapsackProblem;
 
-public class Node {
+public final class Node {
 
 	private final float upperBound, lowerBound, cumulativeValue, cumulativeWeight;
 
@@ -8,13 +8,13 @@ public class Node {
 
 	private final boolean isSelected;
 
-	private Node(final float upperBound, final float lowerBound, final float cumulativeValue, final float cumulativeWeight, final int level, final boolean isSelected) {
-		this.cumulativeValue = cumulativeValue;
-		this.cumulativeWeight = cumulativeWeight;
-		this.upperBound = upperBound;
-		this.lowerBound = lowerBound;
-		this.level = level;
-		this.isSelected = isSelected;
+	private Node(final NodeBuilder builder) {
+		this.cumulativeValue = builder.cumulativeValue;
+		this.cumulativeWeight = builder.cumulativeWeight;
+		this.upperBound = builder.upperBound;
+		this.lowerBound = builder.lowerBound;
+		this.level = builder.level;
+		this.isSelected = builder.isSelected;
 	}
 
 	public float getUpperBound() { return this.upperBound; }
@@ -80,8 +80,6 @@ public class Node {
 			return this;
 		}
 
-		public Node build() {
-			return new Node(this.upperBound, this.lowerBound, this.cumulativeValue, this.cumulativeWeight, this.level, this.isSelected);
-		}
+		public Node build() { return new Node(this); }
 	}
 }

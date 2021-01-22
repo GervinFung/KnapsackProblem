@@ -20,7 +20,7 @@ public final class TestKnapsackProblem {
 			final Scanner scan = new Scanner(System.in);
 			while (true) {
 				// show the item list in a table (name weight value quantity)
-				System.out.println(String.format("\n%-20s%-8s%-8s%s", "Name", "Weight", "Value", "Quantity"));
+				System.out.printf("\n%-20s%-8s%-8s%s%n", "Name", "Weight", "Value", "Quantity");
 				System.out.println("--------------------------------------------------");
 				for (final Item item : itemList) {
 					System.out.println(item.showProperties());
@@ -29,14 +29,14 @@ public final class TestKnapsackProblem {
 				String input;
 				// knapsackCapcity --> allow user to determine the max capacity of the knapsack
 				// solutionOption --> allow user to choose which solution they want to see
-				int maxKnapsackCapacity = 0, solutionOption = 0;
+				int maxKnapsackCapacity, solutionOption;
 				boolean invalidInput; // used to loop prompt input if invalid input is entered
 				// this loop prompt for knapsack capacity until user enter a non negative
 				// integer
 				do {
 					System.out.print("Enter the knapsack maximum capacity : ");
 					input = scan.nextLine();
-					invalidInput = !tryParseAsInt(input, 1, Integer.MAX_VALUE);
+					invalidInput = !tryParseAsInt(input, Integer.MAX_VALUE);
 				} while (invalidInput);
 
 				maxKnapsackCapacity = Integer.parseInt(input);
@@ -70,7 +70,7 @@ public final class TestKnapsackProblem {
 						// loop the program so user do not have to re-run the program when wanted to try
 						// another solution
 						System.out.println("\n[ 1 ] - Dynamic Programming (bottom up approach)");
-						System.out.println("[ 2 ] - Branch and bound");
+						System.out.println("[ 2 ] - Least Cost Branch and bound");
 						System.out.println("[ 3 ] - Memoize (top down approach)");
 						System.out.println("[ 4 ] - Brute-force technique");
 						System.out.println("[ 5 ] - Genetic Programming");
@@ -79,7 +79,7 @@ public final class TestKnapsackProblem {
 						do {
 							System.out.print("Choose option (1-5) >> ");
 							input = scan.nextLine();
-							invalidInput = !tryParseAsInt(input, 1, 5);
+							invalidInput = !tryParseAsInt(input, 5);
 						} while (invalidInput);
 						solutionOption = Integer.parseInt(input);
 						// dynamic programming
@@ -134,13 +134,13 @@ public final class TestKnapsackProblem {
 
 	// check if the 2nd to 4th data in items.txt text file
 	// can be parsed as integer
-	private static boolean tryParseAsInt(final String data, final int min, final int max) {
+	private static boolean tryParseAsInt(final String data, final int max) {
 		try {
 			final int temp = Integer.parseInt(data);
-			if (temp >= min && temp <= max) {
+			if (temp >= 1 && temp <= max) {
 				return true;
 			}
-		} catch (final Exception exc) {}
+		} catch (final Exception ignored) {}
 		return false;
 	}
 
@@ -162,7 +162,7 @@ public final class TestKnapsackProblem {
 				final String itemValue = data[2];
 				final String itemQuantity = data[3];
 				for (int i = 1; i < 4; i++) {
-					if (!tryParseAsInt(data[i], 1, Integer.MAX_VALUE)) {
+					if (!tryParseAsInt(data[i], Integer.MAX_VALUE)) {
 						throw new NumberFormatException(excMessage);
 					}
 				}

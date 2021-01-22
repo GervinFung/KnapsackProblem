@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class GeneticProgramming extends AbstractKnapsackSolution {
+public final class GeneticProgramming extends AbstractKnapsackSolution {
 
 	private final int numberOfPopulations, numberOfGenerations, numberOfChromosomes;
 	private final double mutationMaxPossiblityRange;
@@ -32,7 +32,7 @@ public class GeneticProgramming extends AbstractKnapsackSolution {
 		final List <String> immutablePopulations = new ArrayList<>();
 		//stringBuilder to store 1 population
 		final StringBuilder population = new StringBuilder(this.numberOfChromosomes);
-		for (int i = 0; i < numberOfPopulations; i++) {
+		for (int i = 0; i < this.numberOfPopulations; i++) {
 			for (int j = 0; j < this.numberOfChromosomes; j++) {
 				//randomly produce offspring based on 0 OR 1
 				population.append(ThreadLocalRandom.current().nextInt(0, 2));
@@ -81,8 +81,8 @@ public class GeneticProgramming extends AbstractKnapsackSolution {
 
 			for (int i = 0; i < this.numberOfPopulations; i++) {
 				final int splitSize = ThreadLocalRandom.current().nextInt(0, paternal.length());
-				offSpringBuilder.append(paternal.substring(0, splitSize));
-				offSpringBuilder.append(maternal.substring(splitSize, paternal.length()));
+				offSpringBuilder.append(paternal, 0, splitSize);
+				offSpringBuilder.append(maternal, splitSize, paternal.length());
 				possibleOffSpring.add(mutation(offSpringBuilder.toString()));
 				offSpringBuilder.setLength(0);
 			}
