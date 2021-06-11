@@ -48,10 +48,8 @@ public final class GeneticProgramming extends AbstractKnapsackSolution {
 	private Map <String, Integer> calculateFitness(final List<String> populations) {
 		//store population and their fitness
 		final TreeMap <String, Integer> immutableFitnessScore = new TreeMap<>();
-		int weight, value;
 		for (final String string : populations) {
-			weight = 0;
-			value = 0;
+			int weight = 0, value = 0;
 			for (int i = 0; i < string.length(); i++) {
 				//the fitness score is based on number of '1' in a string
 				if (string.charAt(i) == '1') {
@@ -100,11 +98,7 @@ public final class GeneticProgramming extends AbstractKnapsackSolution {
 			final StringBuilder latestOffSpring = new StringBuilder(offSpring);
 			final int index = ThreadLocalRandom.current().nextInt(0, offSpring.length());
 			//began altering the genes
-			if (offSpring.charAt(index) == '1') {
-				latestOffSpring.setCharAt(index, '0');
-			} else {
-				latestOffSpring.setCharAt(index, '1');
-			}
+			latestOffSpring.setCharAt(index, offSpring.charAt(index) == '1' ? '0' : '1');
 			return latestOffSpring.toString();
 		}
 		//if out of range just return the original offspring

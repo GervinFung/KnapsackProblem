@@ -23,10 +23,7 @@ public final class Knapsack {
 	}
 
 	public Knapsack(final int maxCapacity, final List<Item> allItems) {
-		this.maxCapacity = maxCapacity;
-		this.maxValue = 0;
-		this.allItems = ungroupItems(allItems);
-		this.mapTakenItems = new TreeMap<>();
+		this(0, maxCapacity, allItems, new TreeMap<>());
 	}
 
 	//getter
@@ -42,9 +39,7 @@ public final class Knapsack {
 		System.out.println("-------------Item(s) added into knapsack-------------");
 		System.out.printf("%-20s%-8s%-8s%s%n", "Name", "Weight", "Value", "Taken Quantity");
 		System.out.println("--------------------------------------------------");
-		for (final Item item : this.getTakenItems().keySet()) {
-			System.out.println(item.toString() + this.getTakenItems().get(item));
-		}
+		this.getTakenItems().keySet().forEach(item -> System.out.println(item.toString() + this.getTakenItems().get(item)));
 		System.out.println("--------------------------------------------------");
 	}
 	

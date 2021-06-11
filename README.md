@@ -8,7 +8,7 @@ NOTE:
 
 Name of Algorithms|Best|Average|Worst|Space Complexity|
 | --- | --- | --- | --- | --- |
-Dynamic Programming|Ω(nW log(n))|Θ(nW log(n))|O(nW log(n))|O(n)|
+Dynamic Programming|Ω(n)|Θ(n)|O(n)|O(n)|
 Least Cost Branch & Bound|O(n)| O(n) ~ O(2 ^ n) |O(2)|O(n)|
 Memoize|Ω(nW log(n))|Θ(nW log(n))|O(nW log(n))|O(nW)
 Brute Force|Ω(2n ^ n)|Θ(2n ^ n)|O(2n ^ n)|O(n)|

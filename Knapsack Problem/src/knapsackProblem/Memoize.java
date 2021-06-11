@@ -34,7 +34,7 @@ public final class Memoize extends AbstractKnapsackSolution {
 		if (n <= 0) {
 			return 0;
 		}
-		else if (knapsack.getAllItems().get(n - 1).getWeight() <= capacity){
+		if (knapsack.getAllItems().get(n - 1).getWeight() <= capacity){
 			//find the value of not taking n - 1th item
 			final int notTakeNthItem = memoize(recursiveMap, knapsack, memoize, n - 1, capacity);
 			//find the value of taking n-1th item

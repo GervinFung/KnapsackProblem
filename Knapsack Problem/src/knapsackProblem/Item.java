@@ -26,13 +26,10 @@ public final class Item implements Comparable<Item> {
 	//smaller value will be prioritised, to maintain ascending order of value for item with equal density
 	@Override
 	public int compareTo(final Item AnotherItem) {
-		if (this.getDensity() > AnotherItem.getDensity()) {
-			return -1;
-		}
-		else if (this.getDensity() == AnotherItem.getDensity()) {
+		if (this.getDensity() == AnotherItem.getDensity()) {
 			return Integer.compare(this.getValue(), AnotherItem.getValue());
 		}
-		return 1;
+		return this.getDensity() > AnotherItem.getDensity() ? -1 : 1;
 	}
 
 	public String showProperties() {return String.format("%-20s%-8s%-8s%s", name, weight, value, quantity);}

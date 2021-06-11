@@ -24,14 +24,10 @@ public abstract class AbstractKnapsackSolution {
 	//identify the items taken into the knapsack
 	protected abstract List<Item> takeItems(final int maxValue);
 
-	private final Map<Item, Integer> finaliseTakenItems(final List<Item> takeItems) {
+	private Map<Item, Integer> finaliseTakenItems(final List<Item> takeItems) {
 		final TreeMap<Item, Integer> mapTakenItems = new TreeMap<>();
 		for (final Item item : takeItems) {
-			if (mapTakenItems.containsKey(item)) {
-				mapTakenItems.put(item, mapTakenItems.get(item) + 1);
-			} else {
-				mapTakenItems.put(item, 1);
-			}
+			mapTakenItems.put(item, mapTakenItems.containsKey(item) ? mapTakenItems.get(item) + 1 : 1);
 		}
 		return Collections.unmodifiableMap(mapTakenItems);
 	}

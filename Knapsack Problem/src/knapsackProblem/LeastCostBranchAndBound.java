@@ -22,15 +22,10 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 		//which has differences on the way algorithms work, as Branch and Bound sort according to density of items, if item has same density
 		//item with higher value must be at the top, this sorting does that
 		this.copyOfItems.sort((item1, item2) -> {
-			if (item1.getDensity() > item2.getDensity()) {
-				return -1;
-			}
-			else if (item1.getDensity() == item2.getDensity()) {
+			if (item1.getDensity() == item2.getDensity()) {
 				return -Integer.compare(item1.getValue(), item2.getValue());
 			}
-			else {
-				return 1;
-			}
+			return item1.getDensity() > item2.getDensity() ? -1 : 1;
 		});
 	}
 
@@ -63,9 +58,9 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 
 	private Node updateNode(final Node current, final boolean isSelected) {
 		final NodeBuilder nodeBuilder = new NodeBuilder().setUpperBound(computeBound(current, isSelected, true))
-															.setLowerBound(computeBound(current, isSelected, false))
-															.setLevel(current.getNodeLevel() + 1)
-															.setIsSelected(isSelected);
+														.setLowerBound(computeBound(current, isSelected, false))
+														.setLevel(current.getNodeLevel() + 1)
+														.setIsSelected(isSelected);
 		if (isSelected) {
 			final float cumulativeWeight = current.getCumulativeWeight() + this.copyOfItems.get(current.getNodeLevel()).getWeight();
 			final float cumulativeValue = current.getCumulativeValue() - this.copyOfItems.get(current.getNodeLevel()).getValue();
@@ -89,13 +84,10 @@ public class LeastCostBranchAndBound extends AbstractKnapsackSolution {
 
 		//Priority queue to store elements based on lower bounds
 		final PriorityQueue<Node> nodesPriorityQueue = new PriorityQueue<>((nodeA, nodeB) -> {
-			if (nodeA.getLowerBound() > nodeB.getLowerBound()) {
-				return 1;
+			if (nodeA.getLowerBound() == nodeB.getLowerBound()) {
+				return 0;
 			}
-			else if (nodeA.getLowerBound() < nodeB.getLowerBound()) {
-				return -1;
-			}
-			return 0;
+			return nodeA.getLowerBound() > nodeB.getLowerBound() ? 1 : -1;
 		});
 
 		// Insert a dummy Node

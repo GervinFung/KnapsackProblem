@@ -59,8 +59,8 @@ public final class BruteForce extends AbstractKnapsackSolution {
 	
 	@Override
 	protected List<Item> takeItems(final int currentMaxValue) {
-		final List<Item> takenItems = new ArrayList<>();
 
+		final List<Item> takenItems = new ArrayList<>();
 		
 		for (int i = 0; i < this.optimalCombination.length(); i++) {
 			
